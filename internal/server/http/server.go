@@ -26,7 +26,7 @@ func Serve(wg *sync.WaitGroup, grpc_port string, http_port string) {
 		return
 	}
 
-	log.Printf("Serving HTTP on localhost:%s ...", http_port)
+	log.Printf("[Account] Serving HTTP on localhost:%s ...", http_port)
 
 	http.ListenAndServe(fmt.Sprintf(":%s", http_port), mux)
 }

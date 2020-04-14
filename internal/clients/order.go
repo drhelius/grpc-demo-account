@@ -10,9 +10,9 @@ import (
 var OrderService order.OrderServiceClient
 
 func init() {
-	conn, err := grpc.Dial("localhost:5002", grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial("order:5000", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		log.Fatalf("[Account] Order service did not connect: %v", err)
 	}
 
 	OrderService = order.NewOrderServiceClient(conn)
