@@ -49,7 +49,7 @@ func getUser(id string) *user.User {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	log.Printf("[Account] Inoking User service: %s", id)
+	log.Printf("[Account] Invoking User service: %s", id)
 
 	u, err := clients.UserService.Read(ctx, &user.ReadUserReq{Id: id})
 
@@ -67,7 +67,7 @@ func getOrder(id string) *order.Order {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	log.Printf("[Account] Inoking Order service: %s", id)
+	log.Printf("[Account] Invoking Order service: %s", id)
 
 	o, err := clients.OrderService.Read(ctx, &order.ReadOrderReq{Id: id})
 
