@@ -35,8 +35,9 @@ func (s *Server) Read(ctx context.Context, in *account.ReadAccountReq) (*account
 	u := getUser(strconv.Itoa(randomdata.Number(1000000)))
 	o1 := getOrder(strconv.Itoa(randomdata.Number(1000000)))
 	o2 := getOrder(strconv.Itoa(randomdata.Number(1000000)))
+	o3 := getOrder(strconv.Itoa(randomdata.Number(1000000)))
 
-	orders := []*order.Order{o1, o2}
+	orders := []*order.Order{o1, o2, o3}
 
 	r := &account.ReadAccountResp{Account: &account.Account{Id: in.GetId(), User: u, Orders: orders}}
 
