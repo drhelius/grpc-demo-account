@@ -10,9 +10,11 @@ import (
 var OrderService order.OrderServiceClient
 
 func init() {
-	conn, err := grpc.Dial("order:5000", grpc.WithInsecure(), grpc.WithBlock())
+	log.Printf("[Account] Dialing to 'order:5000' ...")
+
+	conn, err := grpc.Dial("order:5000", grpc.WithInsecure(), grpc.WithBlock(), grpc.FailOnNonTempDialError(true))
 	if err != nil {
-		log.Fatalf("[Account] Order service did not connect: %v", err)
+		log.Fatalf("[Account] Error dialing to Order service: %v", err)
 	}
 
 	OrderService = order.NewOrderServiceClient(conn)

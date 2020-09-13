@@ -55,11 +55,11 @@ func getUser(id string) *user.User {
 	u, err := clients.UserService.Read(ctx, &user.ReadUserReq{Id: id})
 
 	if err != nil {
-		log.Fatalf("[Account] Could not invoke User service: %v", err)
+		log.Printf("[Account] ERROR - Could not invoke User service: %v", err)
+		return &user.User{}
 	}
 
 	log.Printf("[Account] User service invocation: %v", u.GetUser())
-
 	return u.GetUser()
 }
 
@@ -73,10 +73,10 @@ func getOrder(id string) *order.Order {
 	o, err := clients.OrderService.Read(ctx, &order.ReadOrderReq{Id: id})
 
 	if err != nil {
-		log.Fatalf("[Account] Could not invoke Order service: %v", err)
+		log.Printf("[Account] ERROR - Could not invoke Order service: %v", err)
+		return &order.Order{}
 	}
 
 	log.Printf("[Account] Order service invocation: %v", o.GetOrder())
-
 	return o.GetOrder()
 }

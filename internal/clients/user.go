@@ -10,9 +10,11 @@ import (
 var UserService user.UserServiceClient
 
 func init() {
-	conn, err := grpc.Dial("user:5000", grpc.WithInsecure(), grpc.WithBlock())
+	log.Printf("[Account] Dialing to 'user:5000' ...")
+
+	conn, err := grpc.Dial("user:5000", grpc.WithInsecure(), grpc.WithBlock(), grpc.FailOnNonTempDialError(true))
 	if err != nil {
-		log.Fatalf("[Account] User service did not connect: %v", err)
+		log.Fatalf("[Account] Error dialing to User service: %v", err)
 	}
 
 	UserService = user.NewUserServiceClient(conn)
