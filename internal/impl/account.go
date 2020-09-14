@@ -53,7 +53,7 @@ func getUser(ctx context.Context, id string) *user.User {
 
 	headersIn, _ := metadata.FromIncomingContext(ctx)
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, 5*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Second)
 	defer cancel()
 
 	ctx = metadata.NewOutgoingContext(ctxTimeout, headersIn)
@@ -72,6 +72,13 @@ func getUser(ctx context.Context, id string) *user.User {
 func getOrder(ctx context.Context, id string) *order.Order {
 
 	log.Printf("[Account] Invoking Order service: %s", id)
+
+	headersIn, _ := metadata.FromIncomingContext(ctx)
+
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Second)
+	defer cancel()
+
+	ctx = metadata.NewOutgoingContext(ctxTimeout, headersIn)
 
 	o, err := clients.OrderService.Read(ctx, &order.ReadOrderReq{Id: id})
 
