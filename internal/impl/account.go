@@ -32,10 +32,10 @@ func (s *Server) Read(ctx context.Context, in *account.ReadAccountReq) (*account
 
 	log.Printf("[Account] Read Req: %v", in.GetId())
 
-	u := getUser(strconv.Itoa(randomdata.Number(1000000)))
-	o1 := getOrder(strconv.Itoa(randomdata.Number(1000000)))
-	o2 := getOrder(strconv.Itoa(randomdata.Number(1000000)))
-	o3 := getOrder(strconv.Itoa(randomdata.Number(1000000)))
+	u := getUser(ctx, strconv.Itoa(randomdata.Number(1000000)))
+	o1 := getOrder(ctx, strconv.Itoa(randomdata.Number(1000000)))
+	o2 := getOrder(ctx, strconv.Itoa(randomdata.Number(1000000)))
+	o3 := getOrder(ctx, strconv.Itoa(randomdata.Number(1000000)))
 
 	orders := []*order.Order{o1, o2, o3}
 
@@ -46,13 +46,13 @@ func (s *Server) Read(ctx context.Context, in *account.ReadAccountReq) (*account
 	return r, nil
 }
 
-func getUser(id string) *user.User {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+func getUser(ctx context.Context, id string) *user.User {
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Second)
 	defer cancel()
 
 	log.Printf("[Account] Invoking User service: %s", id)
 
-	u, err := clients.UserService.Read(ctx, &user.ReadUserReq{Id: id})
+	u, err := clients.UserService.Read(ctxTimeout, &user.ReadUserReq{Id: id})
 
 	if err != nil {
 		log.Printf("[Account] ERROR - Could not invoke User service: %v", err)
@@ -63,14 +63,14 @@ func getUser(id string) *user.User {
 	return u.GetUser()
 }
 
-func getOrder(id string) *order.Order {
+func getOrder(ctx context.Context, id string) *order.Order {
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Second)
 	defer cancel()
 
 	log.Printf("[Account] Invoking Order service: %s", id)
 
-	o, err := clients.OrderService.Read(ctx, &order.ReadOrderReq{Id: id})
+	o, err := clients.OrderService.Read(ctxTimeout, &order.ReadOrderReq{Id: id})
 
 	if err != nil {
 		log.Printf("[Account] ERROR - Could not invoke Order service: %v", err)
