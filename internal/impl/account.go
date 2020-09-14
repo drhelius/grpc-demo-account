@@ -53,7 +53,7 @@ func getUser(ctx context.Context, id string) *user.User {
 
 	headersIn, _ := metadata.FromIncomingContext(ctx)
 
-	ctxTimeout, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	ctx = metadata.NewOutgoingContext(ctxTimeout, headersIn)
