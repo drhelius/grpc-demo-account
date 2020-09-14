@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"strconv"
-	"time"
 
 	"github.com/Pallinder/go-randomdata"
 	"github.com/drhelius/grpc-demo-account/internal/clients"
@@ -47,12 +46,10 @@ func (s *Server) Read(ctx context.Context, in *account.ReadAccountReq) (*account
 }
 
 func getUser(ctx context.Context, id string) *user.User {
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Second)
-	defer cancel()
 
 	log.Printf("[Account] Invoking User service: %s", id)
 
-	u, err := clients.UserService.Read(ctxTimeout, &user.ReadUserReq{Id: id})
+	u, err := clients.UserService.Read(ctx, &user.ReadUserReq{Id: id})
 
 	if err != nil {
 		log.Printf("[Account] ERROR - Could not invoke User service: %v", err)
@@ -65,12 +62,9 @@ func getUser(ctx context.Context, id string) *user.User {
 
 func getOrder(ctx context.Context, id string) *order.Order {
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Second)
-	defer cancel()
-
 	log.Printf("[Account] Invoking Order service: %s", id)
 
-	o, err := clients.OrderService.Read(ctxTimeout, &order.ReadOrderReq{Id: id})
+	o, err := clients.OrderService.Read(ctx, &order.ReadOrderReq{Id: id})
 
 	if err != nil {
 		log.Printf("[Account] ERROR - Could not invoke Order service: %v", err)
