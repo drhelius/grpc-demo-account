@@ -4,12 +4,14 @@ import (
 	"context"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/Pallinder/go-randomdata"
 	"github.com/drhelius/grpc-demo-account/internal/clients"
 	"github.com/drhelius/grpc-demo-proto/account"
 	"github.com/drhelius/grpc-demo-proto/order"
 	"github.com/drhelius/grpc-demo-proto/user"
+	"google.golang.org/grpc/metadata"
 )
 
 type Server struct {
@@ -48,6 +50,13 @@ func (s *Server) Read(ctx context.Context, in *account.ReadAccountReq) (*account
 func getUser(ctx context.Context, id string) *user.User {
 
 	log.Printf("[Account] Invoking User service: %s", id)
+
+	headersIn, _ := metadata.FromIncomingContext(ctx)
+
+	ctxTimeout, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	ctx = metadata.NewOutgoingContext(ctxTimeout, headersIn)
 
 	u, err := clients.UserService.Read(ctx, &user.ReadUserReq{Id: id})
 
