@@ -13,25 +13,16 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-const (
-	prefixTracerState  = "x-b3-"
-	zipkinTraceID      = prefixTracerState + "traceid"
-	zipkinSpanID       = prefixTracerState + "spanid"
-	zipkinParentSpanID = prefixTracerState + "parentspanid"
-	zipkinSampled      = prefixTracerState + "sampled"
-	zipkinFlags        = prefixTracerState + "flags"
-)
-
-var otHeaders = []string{
-	zipkinTraceID,
-	zipkinSpanID,
-	zipkinParentSpanID,
-	zipkinSampled,
-	zipkinFlags}
+var opentracingHeaders = []string{
+	"x-b3-traceid",
+	"x-b3-spanid",
+	"x-b3-parentspanid",
+	"x-b3-sampled",
+	"x-b3-flags"}
 
 func injectHeadersIntoMetadata(ctx context.Context, req *http.Request) metadata.MD {
 	pairs := []string{}
-	for _, h := range otHeaders {
+	for _, h := range opentracingHeaders {
 		if v := req.Header.Get(h); len(v) > 0 {
 			pairs = append(pairs, h, v)
 		}
