@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"strconv"
-	"time"
 
 	"github.com/Pallinder/go-randomdata"
 	"github.com/drhelius/grpc-demo-account/internal/clients"
@@ -88,10 +87,10 @@ func getUser(ctx context.Context, id string) *user.User {
 
 	headersIn, _ := metadata.FromIncomingContext(ctx)
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Second)
-	defer cancel()
+	//ctxTimeout, cancel := context.WithTimeout(ctx, time.Second)
+	//defer cancel()
 
-	ctx = metadata.NewOutgoingContext(ctxTimeout, headersIn)
+	ctx = metadata.NewOutgoingContext(ctx, headersIn)
 
 	u, err := clients.UserService.Read(ctx, &user.ReadUserReq{Id: id})
 
@@ -110,10 +109,10 @@ func getOrder(ctx context.Context, id string) *order.Order {
 
 	headersIn, _ := metadata.FromIncomingContext(ctx)
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Second)
-	defer cancel()
+	//ctxTimeout, cancel := context.WithTimeout(ctx, time.Second)
+	//defer cancel()
 
-	ctx = metadata.NewOutgoingContext(ctxTimeout, headersIn)
+	ctx = metadata.NewOutgoingContext(ctx, headersIn)
 
 	o, err := clients.OrderService.Read(ctx, &order.ReadOrderReq{Id: id})
 
