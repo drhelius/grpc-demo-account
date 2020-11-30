@@ -11,7 +11,9 @@ import (
 	"github.com/drhelius/grpc-demo-proto/account"
 	"github.com/drhelius/grpc-demo-proto/order"
 	"github.com/drhelius/grpc-demo-proto/user"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 )
 
 type Server struct {
@@ -24,6 +26,11 @@ func (s *Server) Create(ctx context.Context, in *account.CreateAccountReq) (*acc
 
 	r := &account.CreateAccountResp{Id: strconv.Itoa(randomdata.Number(1000000))}
 
+	err := failedContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	log.Printf("[Account] Create Res: %v", r.GetId())
 
 	return r, nil
@@ -33,10 +40,38 @@ func (s *Server) Read(ctx context.Context, in *account.ReadAccountReq) (*account
 
 	log.Printf("[Account] Read Req: %v", in.GetId())
 
+	err := failedContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	u := getUser(ctx, strconv.Itoa(randomdata.Number(1000000)))
+
+	err = failedContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	o1 := getOrder(ctx, strconv.Itoa(randomdata.Number(1000000)))
+
+	err = failedContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	o2 := getOrder(ctx, strconv.Itoa(randomdata.Number(1000000)))
+
+	err = failedContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	o3 := getOrder(ctx, strconv.Itoa(randomdata.Number(1000000)))
+
+	err = failedContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	orders := []*order.Order{o1, o2, o3}
 
@@ -89,4 +124,18 @@ func getOrder(ctx context.Context, id string) *order.Order {
 
 	log.Printf("[Account] Order service invocation: %v", o.GetOrder())
 	return o.GetOrder()
+}
+
+func failedContext(ctx context.Context) error {
+	if ctx.Err() == context.Canceled {
+		log.Printf("[Account] context canceled, stoping server side operation")
+		return status.Error(codes.Canceled, "context canceled, stoping server side operation")
+	}
+
+	if ctx.Err() == context.DeadlineExceeded {
+		log.Printf("[Account] dealine has exceeded, stoping server side operation")
+		return status.Error(codes.DeadlineExceeded, "dealine has exceeded, stoping server side operation")
+	}
+
+	return nil
 }
