@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/Pallinder/go-randomdata"
 	"github.com/drhelius/grpc-demo-account/internal/clients"
@@ -39,6 +40,8 @@ func (s *Server) Read(ctx context.Context, in *account.ReadAccountReq) (*account
 
 	log.Printf("[Account] Read Req: %v", in.GetId())
 
+	var orders [3]*order.Order
+
 	err := failedContext(ctx)
 	if err != nil {
 		return nil, err
@@ -46,35 +49,16 @@ func (s *Server) Read(ctx context.Context, in *account.ReadAccountReq) (*account
 
 	u := getUser(ctx, strconv.Itoa(randomdata.Number(1000000)))
 
-	err = failedContext(ctx)
-	if err != nil {
-		return nil, err
+	for i := 0; i < 3; i++ {
+		err = failedContext(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		orders[i] = getOrder(ctx, strconv.Itoa(randomdata.Number(1000000)))
 	}
 
-	o1 := getOrder(ctx, strconv.Itoa(randomdata.Number(1000000)))
-
-	err = failedContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	o2 := getOrder(ctx, strconv.Itoa(randomdata.Number(1000000)))
-
-	err = failedContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	o3 := getOrder(ctx, strconv.Itoa(randomdata.Number(1000000)))
-
-	err = failedContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	orders := []*order.Order{o1, o2, o3}
-
-	r := &account.ReadAccountResp{Account: &account.Account{Id: in.GetId(), User: u, Orders: orders}}
+	r := &account.ReadAccountResp{Account: &account.Account{Id: in.GetId(), User: u, Orders: orders[:]}}
 
 	log.Printf("[Account] Read Res: %v", r.GetAccount())
 
@@ -87,10 +71,10 @@ func getUser(ctx context.Context, id string) *user.User {
 
 	headersIn, _ := metadata.FromIncomingContext(ctx)
 
-	//ctxTimeout, cancel := context.WithTimeout(ctx, time.Second)
-	//defer cancel()
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Second)
+	defer cancel()
 
-	ctx = metadata.NewOutgoingContext(ctx, headersIn)
+	ctx = metadata.NewOutgoingContext(ctxTimeout, headersIn)
 
 	u, err := clients.UserService.Read(ctx, &user.ReadUserReq{Id: id})
 
@@ -109,10 +93,10 @@ func getOrder(ctx context.Context, id string) *order.Order {
 
 	headersIn, _ := metadata.FromIncomingContext(ctx)
 
-	//ctxTimeout, cancel := context.WithTimeout(ctx, time.Second)
-	//defer cancel()
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Second)
+	defer cancel()
 
-	ctx = metadata.NewOutgoingContext(ctx, headersIn)
+	ctx = metadata.NewOutgoingContext(ctxTimeout, headersIn)
 
 	o, err := clients.OrderService.Read(ctx, &order.ReadOrderReq{Id: id})
 
