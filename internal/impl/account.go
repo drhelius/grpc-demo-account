@@ -40,14 +40,14 @@ func (s *Server) Read(ctx context.Context, in *account.ReadAccountReq) (*account
 
 	log.Printf("[Account] Read Req: %v", in.GetId())
 
-	var orders [3]*order.Order
-
 	err := failedContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	u := getUser(ctx, strconv.Itoa(randomdata.Number(1000000)))
+
+	var orders [3]*order.Order
 
 	for i := 0; i < 3; i++ {
 		err = failedContext(ctx)
